@@ -1,12 +1,12 @@
 // пример с прерываниями pinChangeInterrupt (прерывания на любом пине)
 // только для ATmega328 (UNO, Nano, Pro Mini)
 
-#define SW 0
-#define DT 2
-#define CLK 3
+#define CLK 4
+#define DT 5
+#define SW 6
 
-#include "GyverEncoder.h"
-Encoder enc1(CLK, DT, SW);
+#include <EncButton.h>
+EncButton<EB_TICK, CLK, DT, SW> enc;
 
 void setup() {
   Serial.begin(9600);
@@ -17,13 +17,23 @@ void setup() {
 }
 
 void loop() {
-  enc1.tick();    // оставляем тут для работы "временных" функций и антидребезга
-  
-  if (enc1.isRight()) Serial.println("Right");         // если был поворот
-  if (enc1.isLeft()) Serial.println("Left");
+  // оставляем тут для работы "временных" функций и антидребезга
+  enc.tick();
 
-  if (enc1.isRightH()) Serial.println("Right holded"); // если было удержание + поворот
-  if (enc1.isLeftH()) Serial.println("Left holded");
+  if (enc.isTurn()) {               // любой поворот
+    Serial.print("turn ");
+    Serial.println(enc.counter);    // вывод счётчика
+  }
+
+  if (enc.isLeft()) {
+    if (enc.isFast()) Serial.println("fast left");
+    else Serial.println("left");
+  }
+
+  if (enc.isRight()) {
+    if (enc.isFast()) Serial.println("fast right");
+    else Serial.println("right");
+  }
 }
 
 // функция для настройки PCINT для ATmega328 (UNO, Nano, Pro Mini)
@@ -46,16 +56,15 @@ uint8_t attachPCINT(uint8_t pin) {
 }
 
 // Векторы PCINT, нужно кинуть сюда тики
-// не обязательно в каждый вектор, достаточно в тот, который задействован
 // пины 0-7: PCINT2
 // пины 8-13: PCINT0
 // пины A0-A5: PCINT1
 ISR(PCINT0_vect) {
-  //enc1.tick();
+
 }
 ISR(PCINT1_vect) {
-  //enc1.tick();
+
 }
 ISR(PCINT2_vect) {
-  enc1.tick();
+  enc.tick();
 }
