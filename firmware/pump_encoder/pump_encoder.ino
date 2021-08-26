@@ -21,7 +21,7 @@ bool flag;
 unsigned long last_time1, last_time2;
 
 
-EncButton<EB_TICK, S1, S2, KEY> enc; 
+EncButton<EB_TICK, S1, S2, KEY> enc;
 GyverTM1637 disp(CLK, DIO);
 
 
@@ -71,7 +71,7 @@ void loop() {
     EEPROM.put(2, pressure_max);
   }
 
-  
+
   pressure = analogRead(pressure_Aport);
 
   if (millis() - last_time1 > 850) { 
