@@ -1,23 +1,26 @@
-#define pressure_Aport 0
-#define relay_Dport 5
 
+// ====Ports====
+#define pressure_port A0
+#define relay_port 5
+
+// ====Encoder====
 #define S1 2
 #define S2 3
 #define KEY 4
 
+// ====Display====
 #define CLK 6
 #define DIO 7
 
-#define const_pressure_min 0
-#define const_pressure_max 1000
 
+// ====Libs====
 #include <EncButton.h>
 #include <EEPROM.h>
 #include <GyverTM1637.h>
 
 
-int pressure, pressure_min, pressure_max;
-bool flag;
+int pressure, pressure_low, pressure_high;
+bool is_on_pump, is_on_display;
 unsigned long last_time1, last_time2;
 
 
@@ -25,18 +28,24 @@ EncButton<EB_TICK, S1, S2, KEY> enc;
 GyverTM1637 disp(CLK, DIO);
 
 
+// ограничивает нижний порог от 0 до верхнего порога
+int get_constrained_pressure_low(int pressure_low_local) {
+  return constrain(pressure_low_local, 0, pressure_high);
+}
 
-int constraint_pressure(int pressure_) {
-  return constrain(pressure_, 0, 1000);
+// ограничивает верхний порог от нижнего порога до 800(8 атмосфер)
+int get_constrained_pressure_high(int pressure_high_local) {
+  return constrain(pressure_high_local, pressure_low, 800);
 }
 
 void setup() {
   Serial.begin(9600);
-  
-  pinMode(relay_Dport, OUTPUT);
-  
-  EEPROM.get(0, pressure_min);
-  EEPROM.get(2, pressure_max);
+
+  pinMode(relay_port, OUTPUT);
+
+  // загрузить пороги из памяти
+  EEPROM.get(0, pressure_low);
+  EEPROM.get(2, pressure_high);
 
   disp.clear();
   disp.brightness(7);
@@ -46,60 +55,65 @@ void setup() {
 void loop() {
 
 
+
   enc.tick();
   if (enc.isTurn()) {
     if (enc.isRight()) {
-      pressure_min = constraint_pressure(pressure_min+10);
-      disp.displayInt(pressure_min);
+      pressure_low = get_constrained_pressure_low(pressure_low+10);
+      disp.displayInt(pressure_low);
     }
     if (enc.isLeft()) {
-      pressure_min = constraint_pressure(pressure_min-10);
-      disp.displayInt(pressure_min);
+      pressure_low = get_constrained_pressure_low(pressure_low-10);
+      disp.displayInt(pressure_low);
     }
     if (enc.isRightH()) {
-      pressure_max = constraint_pressure(pressure_max+10);
-      disp.displayInt(pressure_max);
+      pressure_high = get_constrained_pressure_high(pressure_high+10);
+      disp.displayInt(pressure_high);
     }
     if (enc.isLeftH()) {
-      pressure_max = constraint_pressure(pressure_max-10);
-      disp.displayInt(pressure_max);
+      pressure_high = get_constrained_pressure_high(pressure_high-10);
+      disp.displayInt(pressure_high);
     }
+    is_on_display = true;
+    last_time2 = millis();
   }
 
+  // Если энкодер зажат то записать текущие пороги в энергонезависимую память
   if (enc.isHolded()) {
-    EEPROM.put(0, pressure_min);
-    EEPROM.put(2, pressure_max);
+    EEPROM.put(0, pressure_low);
+    EEPROM.put(2, pressure_high);
   }
 
+  // Датчик давления 0 - 1000 0 - 10 атмосфер
+  pressure = analogRead(pressure_port);
 
-  pressure = analogRead(pressure_Aport);
+  // Если прошло 5 сек с момента взаимодействия с энкодером
+  if (millis() - last_time2 > 5000) { 
+        last_time2 = millis();
+        is_on_display = false;
+    }
 
-  if (millis() - last_time1 > 850) { 
+  // Каждые 850 мс обновляет на дисплее текущее давление, если не бездействие
+  if (millis() - last_time1 > 350) { 
         last_time1 = millis();
-        disp.displayInt(pressure);
-    }
-  
-
-  if (pressure < pressure_min) {
-    if (!flag) {
-      digitalWrite(relay_Dport, HIGH);
-      flag = true;
-    }
-    
-    
-  } else {
-      if (pressure > pressure_max) {
-        if (flag) {
-          digitalWrite(relay_Dport, LOW);
-          flag = false;
+        if (is_on_display) {
+          disp.displayInt(pressure);
         }
-        
-      }
-      
-    
+    }
+
+  // Если текущее давление ниже нижнего порога - включить насос
+  if (pressure < pressure_low) {
+    if (!is_on_pump) {
+      digitalWrite(relay_port, HIGH);
+      is_on_pump = true;
+    }
+
   }
-  
-  
-  
-  
+  // Иначе если давление выше верхнего порога - выключить мотор
+  else if (pressure > pressure_high) {
+    if (is_on_pump) {
+      digitalWrite(relay_port, LOW);
+      is_on_pump = false;
+    } 
+  }
 }
