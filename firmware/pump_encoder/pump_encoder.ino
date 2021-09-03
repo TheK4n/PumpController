@@ -20,8 +20,8 @@
 
 
 int pressure, pressure_low, pressure_high;
-bool is_on_pump, is_on_display;
-unsigned long last_time1, last_time2;
+bool is_on_pump, is_on_display, display_cur_pressure;
+unsigned long last_time1, last_time2, last_time3;
 
 
 EncButton<EB_TICK, S1, S2, KEY> enc;
@@ -48,8 +48,9 @@ void setup() {
   EEPROM.get(2, pressure_high);
 
   disp.clear();
-  disp.brightness(7);
+  disp.brightness(7);  // яркость, 0 - 7 (минимум - максимум)
   disp.clear();
+  
 }
 
 void loop() {
@@ -58,6 +59,7 @@ void loop() {
 
   enc.tick();
   if (enc.isTurn()) {
+    disp.clear();
     if (enc.isRight()) {
       pressure_low = get_constrained_pressure_low(pressure_low+10);
       disp.displayInt(pressure_low);
@@ -75,8 +77,17 @@ void loop() {
       disp.displayInt(pressure_high);
     }
     is_on_display = true;
+    display_cur_pressure = false;
     last_time2 = millis();
   }
+
+  // нажать на энкодер - показать текущее давление
+  if (enc.isClick()) {
+    display_cur_pressure = true;
+    is_on_display = true;
+    last_time2 = millis();
+  }
+
 
   // Если энкодер зажат то записать текущие пороги в энергонезависимую память
   if (enc.isHolded()) {
@@ -87,16 +98,18 @@ void loop() {
   // Датчик давления 0 - 1000 0 - 10 атмосфер
   pressure = analogRead(pressure_port);
 
-  // Если прошло 5 сек с момента взаимодействия с энкодером
-  if (millis() - last_time2 > 5000) { 
-        last_time2 = millis();
-        is_on_display = false;
+  // Если прошло 7 сек с момента взаимодействия с энкодером, то отключить дисплей
+  if (millis() - last_time2 > 7000) { 
+        if (is_on_display) {
+          last_time2 = millis();
+          is_on_display = false;
+          disp.clear();
+        }
     }
 
-  // Каждые 850 мс обновляет на дисплее текущее давление, если не бездействие
   if (millis() - last_time1 > 350) { 
         last_time1 = millis();
-        if (is_on_display) {
+        if (display_cur_pressure & is_on_display) {
           disp.displayInt(pressure);
         }
     }
@@ -109,11 +122,14 @@ void loop() {
     }
 
   }
-  // Иначе если давление выше верхнего порога - выключить мотор
+  // Иначе если давление выше верхнего порога - выключить насос
   else if (pressure > pressure_high) {
     if (is_on_pump) {
       digitalWrite(relay_port, LOW);
       is_on_pump = false;
     } 
   }
+  Serial.print(pressure_low);
+  Serial.print(',');
+  Serial.println(pressure_high);
 }
