@@ -13,6 +13,11 @@
 #define DIO 7
 
 
+// ====Consts====
+#define MIN_PRESSURE 60
+#define MAX_PRESSURE 800
+
+
 // ====Libs====
 #include <EncButton.h>
 #include <EEPROM.h>
@@ -30,12 +35,12 @@ GyverTM1637 disp(CLK, DIO);
 
 // ограничивает нижний порог от 0 до верхнего порога
 int get_constrained_pressure_low(int pressure_low_local) {
-  return constrain(pressure_low_local, 0, pressure_high);
+  return constrain(pressure_low_local, MIN_PRESSURE, pressure_high-10);
 }
 
 // ограничивает верхний порог от нижнего порога до 800(8 атмосфер)
 int get_constrained_pressure_high(int pressure_high_local) {
-  return constrain(pressure_high_local, pressure_low, 800);
+  return constrain(pressure_high_local, pressure_low+10, MAX_PRESSURE);
 }
 
 void setup() {
@@ -48,7 +53,7 @@ void setup() {
   EEPROM.get(2, pressure_high);
 
   disp.clear();
-  disp.brightness(7);  // яркость, 0 - 7 (минимум - максимум)
+  disp.brightness(5);  // яркость, 0 - 7 (минимум - максимум)
   disp.clear();
   
 }
@@ -62,25 +67,21 @@ void loop() {
     disp.clear();
     if (enc.isRight()) {
       pressure_low = get_constrained_pressure_low(pressure_low+10);
-      
       disp.displayInt(pressure_low);
       disp.displayByte(0, _L);
     }
     if (enc.isLeft()) {
       pressure_low = get_constrained_pressure_low(pressure_low-10);
-      
       disp.displayInt(pressure_low);
       disp.displayByte(0, _L);
     }
     if (enc.isRightH()) {
       pressure_high = get_constrained_pressure_high(pressure_high+10);
-      
       disp.displayInt(pressure_high);
       disp.displayByte(0, _H);
     }
     if (enc.isLeftH()) {
       pressure_high = get_constrained_pressure_high(pressure_high-10);
-      
       disp.displayInt(pressure_high);
       disp.displayByte(0, _H);
     }
