@@ -62,19 +62,27 @@ void loop() {
     disp.clear();
     if (enc.isRight()) {
       pressure_low = get_constrained_pressure_low(pressure_low+10);
+      
       disp.displayInt(pressure_low);
+      disp.displayByte(0, _L);
     }
     if (enc.isLeft()) {
       pressure_low = get_constrained_pressure_low(pressure_low-10);
+      
       disp.displayInt(pressure_low);
+      disp.displayByte(0, _L);
     }
     if (enc.isRightH()) {
       pressure_high = get_constrained_pressure_high(pressure_high+10);
+      
       disp.displayInt(pressure_high);
+      disp.displayByte(0, _H);
     }
     if (enc.isLeftH()) {
       pressure_high = get_constrained_pressure_high(pressure_high-10);
+      
       disp.displayInt(pressure_high);
+      disp.displayByte(0, _H);
     }
     is_on_display = true;
     display_cur_pressure = false;
@@ -93,6 +101,7 @@ void loop() {
   if (enc.isHolded()) {
     EEPROM.put(0, pressure_low);
     EEPROM.put(2, pressure_high);
+    disp.displayByte(_S, _A, _U, _E);
   }
 
   // Датчик давления 0 - 1000 0 - 10 атмосфер
