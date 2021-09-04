@@ -9,6 +9,32 @@
   </a>
 </p>
 
+## Content
+* [Project description](#chapter-0)
+* [Usage](#chapter-1)
+
+\
+<a id="chapter-0"></a>
+## Project description
+
+Arduino Controller for water pump
+
+
+\
+<a id="chapter-2"></a>
+## Usage
+
+1. Turn to change lower threshold
+2. Hold and turn to change upper threshold
+3. Hold to save thresholds to EEPROM
+4. Click to display current pressure
+
+### Scheme:
+
+[![Scheme](schemes/PumpController.png)]()
+
+
+
 
 <p align="center">
   Contact with me
