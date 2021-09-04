@@ -103,6 +103,8 @@ void loop() {
     EEPROM.put(0, pressure_low);
     EEPROM.put(2, pressure_high);
     disp.displayByte(_S, _A, _U, _E);
+    display_cur_pressure = false;
+    last_time2 = millis();
   }
 
   // Датчик давления 0 - 1000 0 - 10 атмосфер
