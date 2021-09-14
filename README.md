@@ -34,16 +34,4 @@ Arduino Controller for water pump
 [![Scheme](schemes/PumpController.png)]()
 
 
-
-
-<p align="center">
-  Contact with me
-</p>
-<p align="center">
-  <a href="https://T.me/Pend0s">
-    <img src="https://raw.githubusercontent.com/Pendosv/Pendosv/master/img/telegram.png" width="40" height="40">
-  </a>
-    <a href="mailto:djvlad967891@gmail.com">
-        <img src="https://raw.githubusercontent.com/Pendosv/Pendosv/master/img/mail.png" width="40" height="40">
-      </a>
-</p>
+<h1 align="center"><a href="#top">▲</a></h1>
