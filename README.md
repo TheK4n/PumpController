@@ -39,13 +39,13 @@ Arduino Controller for water pump
 <a id="chapter-2"></a>
 ## Hardware
 
-| Name                   |  Model                   |
-|:---------------------  | -------------:           |
-| Controller         | [Arduino Nano ATmega328]()   |
-| Encoder            | [EC11]()                     |
-| Display            | [TM1637]()                   |
-| Relay              | [SSR-40DA]()                 |
-| Pressure sensor    | [EBOWAN]()                   |
+| Name                  |  Model                       |
+| --------------------- | ---------------------------: |
+| Controller            | [Arduino Nano ATmega328]()   |
+| Encoder               | [EC11]()                     |
+| Display               | [TM1637]()                   |
+| Relay                 | [SSR-40DA]()                 |
+| Pressure sensor       | [EBOWAN]()                   |
 
 
 <a id="chapter-3"></a>
