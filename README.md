@@ -33,7 +33,7 @@ Arduino Controller for water pump
 
 ### Scheme:
 
-[![Scheme](schemes/PumpController.png)]()
+[![Scheme](schemes/PumpController.png)](schemes/PumpController.png)
 
 
 <a id="chapter-2"></a>
@@ -41,20 +41,19 @@ Arduino Controller for water pump
 
 | Name                   |  Model                   |
 |:---------------------  | -------------:           |
-| **Controller**         | Arduino Nano ATmega328   |
-| **Encoder**            | EC11                     |
-| **Display**            | TM1637                   |
-| **Relay**              | SSR-40DA                 |
-| **Pressure sensor**    | EBOWAN                   |
+| Controller         | [Arduino Nano ATmega328]()   |
+| Encoder            | [EC11]()                     |
+| Display            | [TM1637]()                   |
+| Relay              | [SSR-40DA]()                 |
+| Pressure sensor    | [EBOWAN]()                   |
 
 
 <a id="chapter-3"></a>
 ## Libraries
 
-| Name             |  Link                                      |
-|:---------------  | -------------                              |
-| **EncButton**    | https://github.com/GyverLibs/GyverTM1637   |
-| **GyverTM1637**  | https://github.com/GyverLibs/EncButton     |
+* <a src="https://github.com/GyverLibs/GyverTM1637"><strong>GyverTM1637</strong></a>
+* <a src="https://github.com/GyverLibs/EncButton"><strong>EncButton</strong></a>
+
 
 
 <h1 align="center"><a href="#top">▲</a></h1>
