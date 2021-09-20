@@ -51,9 +51,8 @@ Arduino Controller for water pump
 <a id="chapter-3"></a>
 ## Libraries
 
-* <a src="https://github.com/GyverLibs/GyverTM1637"><strong>GyverTM1637</strong></a>
-* <a src="https://github.com/GyverLibs/EncButton"><strong>EncButton</strong></a>
-
+* [**GyverTM1637**](https://github.com/GyverLibs/GyverTM1637)
+* [**EncButton**](https://github.com/GyverLibs/EncButton)
 
 
 <h1 align="center"><a href="#top">▲</a></h1>
