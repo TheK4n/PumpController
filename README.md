@@ -12,16 +12,18 @@
 ## Content
 * [Project description](#chapter-0)
 * [Usage](#chapter-1)
+* [Hardware](#chapter-2)
+* [Libraries](#chapter-3)
 
-\
+
 <a id="chapter-0"></a>
 ## Project description
 
 Arduino Controller for water pump
 
 
-\
-<a id="chapter-2"></a>
+
+<a id="chapter-1"></a>
 ## Usage
 
 1. Turn to change lower threshold
@@ -32,6 +34,27 @@ Arduino Controller for water pump
 ### Scheme:
 
 [![Scheme](schemes/PumpController.png)]()
+
+
+<a id="chapter-2"></a>
+## Hardware
+
+| Name                   |  Model                   |
+|:---------------------  | -------------:           |
+| **Controller**         | Arduino Nano ATmega328   |
+| **Encoder**            | EC11                     |
+| **Display**            | TM1637                   |
+| **Relay**              | SSR-40DA                 |
+| **Pressure sensor**    | EBOWAN                   |
+
+
+<a id="chapter-3"></a>
+## Libraries
+
+| Name             |  Link                                      |
+|:---------------  | -------------                              |
+| **EncButton**    | https://github.com/GyverLibs/GyverTM1637   |
+| **GyverTM1637**  | https://github.com/GyverLibs/EncButton     |
 
 
 <h1 align="center"><a href="#top">▲</a></h1>

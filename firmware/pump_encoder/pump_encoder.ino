@@ -44,7 +44,7 @@ int get_constrained_pressure_high(int pressure_high_local) {
 }
 
 void setup() {
-  Serial.begin(9600);
+  // Serial.begin(9600);
 
   pinMode(relay_port, OUTPUT);
 
@@ -141,7 +141,7 @@ void loop() {
       is_on_pump = false;
     } 
   }
-  Serial.print(pressure_low);
-  Serial.print(',');
-  Serial.println(pressure_high);
+//  Serial.print(pressure_low);
+//  Serial.print(',');
+//  Serial.println(pressure_high);
 }
