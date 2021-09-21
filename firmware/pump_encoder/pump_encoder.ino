@@ -14,6 +14,7 @@
 
 
 // ====Consts====
+#define DEBUG 0
 #define MIN_PRESSURE 60
 #define MAX_PRESSURE 800
 
@@ -26,7 +27,7 @@
 
 int pressure, pressure_low, pressure_high;
 bool is_on_pump, is_on_display, display_cur_pressure;
-unsigned long last_time1, last_time2, last_time3;
+unsigned long last_time1, last_time2, last_time3, last_time_pressure;
 
 
 EncButton<EB_TICK, S1, S2, KEY> enc;
@@ -44,7 +45,17 @@ int get_constrained_pressure_high(int pressure_high_local) {
 }
 
 void setup() {
-  // Serial.begin(9600);
+  if (DEBUG) {
+      Serial.begin(9600);
+      Serial.print("pressure");
+      Serial.print(',');
+      Serial.print("low");
+      Serial.print(',');
+      Serial.print("high");
+      Serial.print(',');
+      Serial.println("status");
+  }
+  
 
   pinMode(relay_port, OUTPUT);
 
@@ -126,22 +137,34 @@ void loop() {
         }
     }
 
-  // Если текущее давление ниже нижнего порога - включить насос
-  if (pressure < pressure_low) {
-    if (!is_on_pump) {
-      digitalWrite(relay_port, HIGH);
-      is_on_pump = true;
-    }
+  // измерение каждые 700 мс
+  if (millis() - last_time_pressure > 700) { 
+        last_time_pressure = millis();
 
+    // Если текущее давление ниже нижнего порога - включить насос
+    if (pressure < pressure_low) {
+      if (!is_on_pump) {
+        digitalWrite(relay_port, HIGH);
+        is_on_pump = true;
+      }
+  
+    }
+    // Иначе если давление выше верхнего порога - выключить насос
+    else if (pressure > pressure_high) {
+      if (is_on_pump) {
+        digitalWrite(relay_port, LOW);
+        is_on_pump = false;
+      } 
+    }
   }
-  // Иначе если давление выше верхнего порога - выключить насос
-  else if (pressure > pressure_high) {
-    if (is_on_pump) {
-      digitalWrite(relay_port, LOW);
-      is_on_pump = false;
-    } 
-  }
-//  Serial.print(pressure_low);
-//  Serial.print(',');
-//  Serial.println(pressure_high);
+    
+    if (DEBUG) {
+      Serial.print(pressure);
+      Serial.print(',');
+      Serial.print(pressure_low);
+      Serial.print(',');
+      Serial.print(pressure_high);
+      Serial.print(',');
+      Serial.println(is_on_pump*100);
+    }
 }
