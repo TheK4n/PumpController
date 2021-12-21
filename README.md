@@ -55,4 +55,10 @@ Arduino Controller for water pump
 * [**EncButton**](https://github.com/GyverLibs/EncButton)
 
 
+## ToDO
+* create board on easyeda
+* LGT8F328P
+* average pressure
+
+
 <h1 align="center"><a href="#top">▲</a></h1>
