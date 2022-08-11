@@ -28,7 +28,7 @@
 int pressure, pressure_low, pressure_high;
 bool is_on_pump, is_on_display, display_cur_pressure;
 unsigned long last_time1, last_time2, last_time3, last_time_pressure;
-const int NUM_READ = 5;
+const int NUM_READ = 3;
 
 EncButton<EB_TICK, S1, S2, KEY> enc;
 GyverTM1637 disp(CLK, DIO);
@@ -44,11 +44,19 @@ int get_constrained_pressure_high(int pressure_high_local) {
   return constrain(pressure_high_local, pressure_low+10, MAX_PRESSURE);
 }
 
-int getAveragedPressure() {
-  long sum = 0;                       // локальная переменная sum
-  for (int i = 0; i < NUM_READ; i++)  // согласно количеству усреднений
-    sum += analogRead(pressure_port); // суммируем значения с любого датчика в переменную sum
-  return ((float)sum / NUM_READ);
+// растянутое среднее арифметическое
+int midArifm2(int newVal) {
+  static byte counter = 0;     // счётчик
+  static int prevResult = 0; // хранит предыдущее готовое значение
+  static int sum = 0;  // сумма
+  sum += newVal;   // суммируем новое значение
+  counter++;       // счётчик++
+  if (counter == NUM_READ) {      // достигли кол-ва измерений
+    prevResult = sum / NUM_READ;  // считаем среднее
+    sum = 0;                      // обнуляем сумму
+    counter = 0;                  // сброс счётчика
+  }
+  return prevResult;
 }
 
 void setup() {
@@ -126,7 +134,7 @@ void loop() {
   }
 
   // Датчик давления 0 - 1000 0 - 10 атмосфер
-  pressure = getAveragedPressure();
+  pressure = midArifm2(pressure);
 
   // Если прошло 7 сек с момента взаимодействия с энкодером, то отключить дисплей
   if (millis() - last_time2 > 7000) { 
