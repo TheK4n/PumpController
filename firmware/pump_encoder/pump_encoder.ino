@@ -134,6 +134,7 @@ void loop() {
   }
 
   // Датчик давления 0 - 1000 0 - 10 атмосфер
+  pressure = analogRead(pressure_port);
   pressure = midArifm2(pressure);
 
   // Если прошло 7 сек с момента взаимодействия с энкодером, то отключить дисплей
