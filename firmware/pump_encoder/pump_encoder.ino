@@ -13,8 +13,13 @@
 #define DIO 7
 
 
+#if DEBUG
+  #define DEBUG_MSG(x) Serial.println(x)
+#else
+  #define DEBUG_MSG(x)
+#endif
+
 // ====Consts====
-#define DEBUG 0
 #define MIN_PRESSURE 60
 #define MAX_PRESSURE 800
 
@@ -60,17 +65,17 @@ int midArifm2(int newVal) {
 }
 
 void setup() {
-  if (DEBUG) {
-      Serial.begin(9600);
-      Serial.print("pressure");
-      Serial.print(',');
-      Serial.print("low");
-      Serial.print(',');
-      Serial.print("high");
-      Serial.print(',');
-      Serial.println("status");
-  }
-  
+  #if DEBUG
+  Serial.begin(9600);
+  #endif
+
+  DEBUG_MSG("pressure");
+  DEBUG_MSG(',');
+  DEBUG_MSG("low");
+  DEBUG_MSG(',');
+  DEBUG_MSG("high");
+  DEBUG_MSG(',');
+  DEBUG_MSG("status");
 
   pinMode(relay_port, OUTPUT);
 
@@ -85,9 +90,6 @@ void setup() {
 }
 
 void loop() {
-
-
-
   enc.tick();
   if (enc.isTurn()) {
     disp.clear();
@@ -174,13 +176,11 @@ void loop() {
     }
   }
     
-    if (DEBUG) {
-      Serial.print(pressure);
-      Serial.print(',');
-      Serial.print(pressure_low);
-      Serial.print(',');
-      Serial.print(pressure_high);
-      Serial.print(',');
-      Serial.println(is_on_pump*100);
-    }
+  DEBUG_MSG(pressure);
+  DEBUG_MSG(',');
+  DEBUG_MSG(pressure_low);
+  DEBUG_MSG(',');
+  DEBUG_MSG(pressure_high);
+  DEBUG_MSG(',');
+  DEBUG_MSG(is_on_pump*100);
 }
