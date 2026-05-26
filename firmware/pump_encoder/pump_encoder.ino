@@ -86,7 +86,6 @@ void setup() {
   disp.clear();
   disp.brightness(5);  // яркость, 0 - 7 (минимум - максимум)
   disp.clear();
-  
 }
 
 void loop() {
@@ -140,24 +139,24 @@ void loop() {
   pressure = midArifm2(pressure);
 
   // Если прошло 7 сек с момента взаимодействия с энкодером, то отключить дисплей
-  if (millis() - last_time2 > 7000) { 
-        if (is_on_display) {
-          last_time2 = millis();
-          is_on_display = false;
-          disp.clear();
-        }
-    }
+  if (millis() - last_time2 > 7000) {
+      if (is_on_display) {
+        last_time2 = millis();
+        is_on_display = false;
+        disp.clear();
+      }
+  }
 
-  if (millis() - last_time1 > 350) { 
-        last_time1 = millis();
-        if (display_cur_pressure & is_on_display) {
-          disp.displayInt(pressure);
-        }
-    }
+  if (millis() - last_time1 > 350) {
+      last_time1 = millis();
+      if (display_cur_pressure & is_on_display) {
+        disp.displayInt(pressure);
+      }
+  }
 
   // измерение каждые 1500 мс
   if (millis() - last_time_pressure > 1500) {
-        last_time_pressure = millis();
+    last_time_pressure = millis();
 
     // Если текущее давление ниже нижнего порога - включить насос
     if (pressure < pressure_low) {
@@ -165,17 +164,17 @@ void loop() {
         digitalWrite(relay_port, HIGH);
         is_on_pump = true;
       }
-  
+
     }
     // Иначе если давление выше верхнего порога - выключить насос
     else if (pressure > pressure_high) {
       if (is_on_pump) {
         digitalWrite(relay_port, LOW);
         is_on_pump = false;
-      } 
+      }
     }
   }
-    
+
   DEBUG_MSG(pressure);
   DEBUG_MSG(',');
   DEBUG_MSG(pressure_low);
