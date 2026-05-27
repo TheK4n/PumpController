@@ -35,7 +35,7 @@ bool is_on_pump, is_on_display, display_cur_pressure;
 unsigned long last_time1, last_time2, last_time3, last_time_pressure;
 const int NUM_READ = 3;
 
-EncButton<EB_TICK, S1, S2, KEY> enc;
+EncButton eb(S1, S2, KEY);
 GyverTM1637 disp(CLK, DIO);
 
 
@@ -89,25 +89,25 @@ void setup() {
 }
 
 void loop() {
-  enc.tick();
-  if (enc.isTurn()) {
+  eb.tick();
+  if (eb.turn()) {
     disp.clear();
-    if (enc.isRight()) {
+    if (eb.right()) {
       pressure_low = get_constrained_pressure_low(pressure_low+10);
       disp.displayInt(pressure_low);
       disp.displayByte(0, _L);
     }
-    if (enc.isLeft()) {
+    if (eb.left()) {
       pressure_low = get_constrained_pressure_low(pressure_low-10);
       disp.displayInt(pressure_low);
       disp.displayByte(0, _L);
     }
-    if (enc.isRightH()) {
+    if (eb.rightH()) {
       pressure_high = get_constrained_pressure_high(pressure_high+10);
       disp.displayInt(pressure_high);
       disp.displayByte(0, _H);
     }
-    if (enc.isLeftH()) {
+    if (eb.leftH()) {
       pressure_high = get_constrained_pressure_high(pressure_high-10);
       disp.displayInt(pressure_high);
       disp.displayByte(0, _H);
@@ -118,7 +118,7 @@ void loop() {
   }
 
   // нажать на энкодер - показать текущее давление
-  if (enc.isClick()) {
+  if (eb.click()) {
     display_cur_pressure = true;
     is_on_display = true;
     last_time2 = millis();
@@ -126,7 +126,7 @@ void loop() {
 
 
   // Если энкодер зажат то записать текущие пороги в энергонезависимую память
-  if (enc.isHolded()) {
+  if (eb.hold()) {
     EEPROM.put(0, pressure_low);
     EEPROM.put(2, pressure_high);
     disp.displayByte(_S, _A, _U, _E);
@@ -137,15 +137,6 @@ void loop() {
   // Датчик давления 0 - 1000 0 - 10 атмосфер
   pressure = analogRead(pressure_port);
   pressure = midArifm2(pressure);
-
-  // Если прошло 7 сек с момента взаимодействия с энкодером, то отключить дисплей
-  if (millis() - last_time2 > 7000) {
-      if (is_on_display) {
-        last_time2 = millis();
-        is_on_display = false;
-        disp.clear();
-      }
-  }
 
   if (millis() - last_time1 > 350) {
       last_time1 = millis();
